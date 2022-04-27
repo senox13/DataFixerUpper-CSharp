@@ -23,11 +23,11 @@ namespace DataFixerUpper.Serialization.Codecs{
          * ICodec implementation
          */
         public DataResult<Pair<Either<F, S>, T>> Decode<T>(DynamicOps<T> ops, T input){
-            DataResult<Pair<Either<F, S>, T>> firstRead = first.Decode(ops, input).Map(vo => vo.MapFirst(Either<F, S>.Left));
+            DataResult<Pair<Either<F, S>, T>> firstRead = first.Decode(ops, input).Map(vo => vo.MapFirst(Either.Left<F, S>));
             if(firstRead.Result().IsPresent()){
                 return firstRead;
             }
-            return second.Decode(ops, input).Map(vo => vo.MapFirst(Either<F, S>.Right));
+            return second.Decode(ops, input).Map(vo => vo.MapFirst(Either.Right<F, S>));
         }
 
         public DataResult<T> Encode<T>(Either<F, S> input, DynamicOps<T> ops, T prefix){

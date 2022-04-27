@@ -23,7 +23,7 @@ namespace DataFixerUpper.Serialization{
         }
 
         public static DataResult<R> Success<R>(R result, Lifecycle lifecycle){
-            return new DataResult<R>(Either<R, DataResult<R>.PartialResult>.Left(result), lifecycle);
+            return new DataResult<R>(Either.Left<R, DataResult<R>.PartialResult>(result), lifecycle);
         }
 
         public static DataResult<R> Error<R>(string message){
@@ -35,11 +35,11 @@ namespace DataFixerUpper.Serialization{
         }
 
         public static DataResult<R> Error<R>(string message, Lifecycle lifecycle){
-            return new DataResult<R>(Either<R, DataResult<R>.PartialResult>.Right(new DataResult<R>.PartialResult(message, Optional<R>.Empty())), lifecycle);
+            return new DataResult<R>(Either.Right<R, DataResult<R>.PartialResult>(new DataResult<R>.PartialResult(message, Optional<R>.Empty())), lifecycle);
         }
 
         public static DataResult<R> Error<R>(string message, R partialResult, Lifecycle lifecycle){
-            return new DataResult<R>(Either<R, DataResult<R>.PartialResult>.Right(new DataResult<R>.PartialResult(message, Optional<R>.Of(partialResult))), lifecycle);
+            return new DataResult<R>(Either.Right<R, DataResult<R>.PartialResult>(new DataResult<R>.PartialResult(message, Optional<R>.Of(partialResult))), lifecycle);
 
         }
 
@@ -94,7 +94,7 @@ namespace DataFixerUpper.Serialization{
                     && ra.result.Left().IsPresent()
                     && rb.result.Left().IsPresent()
                 ){
-                    return new DataResult<R>(Either<R, DataResult<R>.PartialResult>.Left(fr.result.Left().Get().Invoke(
+                    return new DataResult<R>(Either.Left<R, DataResult<R>.PartialResult>(fr.result.Left().Get().Invoke(
                         ra.result.Left().Get(),
                         rb.result.Left().Get()
                     )), fr.lifecycle.Add(ra.lifecycle).Add(rb.lifecycle));
@@ -114,7 +114,7 @@ namespace DataFixerUpper.Serialization{
                     && dr2.result.Left().IsPresent()
                     && dr3.result.Left().IsPresent()
                 ){
-                    return new DataResult<R>(Either<R, DataResult<R>.PartialResult>.Left(fr.result.Left().Get().Invoke(
+                    return new DataResult<R>(Either.Left<R, DataResult<R>.PartialResult>(fr.result.Left().Get().Invoke(
                         dr1.result.Left().Get(),
                         dr2.result.Left().Get(),
                         dr3.result.Left().Get()
@@ -214,12 +214,12 @@ namespace DataFixerUpper.Serialization{
 
         public DataResult<R> PromotePartial(Action<string> onError){
             return result.Map(
-                r => new DataResult<R>(Either<R, PartialResult>.Left(r), lifecycle), 
+                r => new DataResult<R>(Either.Left<R, PartialResult>(r), lifecycle), 
                 r => {
                     onError(r.Message());
                     return r.partialResult
-                        .Map(pr => new DataResult<R>(Either<R, PartialResult>.Left(pr), lifecycle))
-                        .OrElseGet(() => Create(Either<R, PartialResult>.Right(r), lifecycle));
+                        .Map(pr => new DataResult<R>(Either.Left<R, PartialResult>(pr), lifecycle))
+                        .OrElseGet(() => Create(Either.Right<R, PartialResult>(r), lifecycle));
                 }
             );
         }
@@ -232,12 +232,12 @@ namespace DataFixerUpper.Serialization{
                 },
                 r => r.partialResult.Map(value => {
                     DataResult<R2> second = function(value);
-                    return DataResult<R2>.Create(Either<R2, DataResult<R2>.PartialResult>.Right(second.Get().Map(
+                    return DataResult<R2>.Create(Either.Right<R2, DataResult<R2>.PartialResult>(second.Get().Map(
                         l2 => new DataResult<R2>.PartialResult(r.message, Optional<R2>.Of(l2)),
                         r2 => new DataResult<R2>.PartialResult(AppendMessages(r.message, r2.message), r2.partialResult)
                     )), lifecycle.Add(second.Lifecycle()));
                 }).OrElseGet(
-                    () => DataResult<R2>.Create(Either<R2, DataResult<R2>.PartialResult>.Right(new DataResult<R2>.PartialResult(r.message, Optional<R2>.Empty())), lifecycle)
+                    () => DataResult<R2>.Create(Either.Right<R2, DataResult<R2>.PartialResult>(new DataResult<R2>.PartialResult(r.message, Optional<R2>.Empty())), lifecycle)
                 )
             );
         }
@@ -248,7 +248,7 @@ namespace DataFixerUpper.Serialization{
                     func => func.Invoke(arg),
                     funcError => new DataResult<R2>.PartialResult(funcError.message, funcError.partialResult.Map(f => f.Invoke(arg)))
                 ),
-                argError => Either<R2, DataResult<R2>.PartialResult>.Right(functionResult.result.Map(
+                argError => Either.Right<R2, DataResult<R2>.PartialResult>(functionResult.result.Map(
                     func => new DataResult<R2>.PartialResult(argError.message, argError.partialResult.Map(func)),
                     funcError => new DataResult<R2>.PartialResult(
                         AppendMessages(argError.message, funcError.message),

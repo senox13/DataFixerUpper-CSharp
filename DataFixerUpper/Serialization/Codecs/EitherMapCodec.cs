@@ -25,11 +25,11 @@ namespace DataFixerUpper.Serialization.Codecs{
          * MapCodec override methods
          */
         public override DataResult<Either<F, S>> Decode<T>(DynamicOps<T> ops, IMapLike<T> input){
-            DataResult<Either<F, S>> firstRead = first.Decode(ops, input).Map(Either<F, S>.Left);
+            DataResult<Either<F, S>> firstRead = first.Decode(ops, input).Map(Either.Left<F, S>);
             if(firstRead.Result().IsPresent()){
                 return firstRead;
             }
-            return second.Decode(ops, input).Map(Either<F, S>.Right);
+            return second.Decode(ops, input).Map(Either.Right<F, S>);
         }
 
         public override RecordBuilder<T> Encode<T>(Either<F, S> input, DynamicOps<T> ops, RecordBuilder<T> prefix){

@@ -125,7 +125,7 @@ namespace DataFixerUpper.Serialization{
                 return DataResult.Error($"{nameof(MergeToList)} called with not a list: {list}", list);
             }
             JArray result = new JArray();
-            if(list != Empty()){ //FIXME: The logic here feels flawed, shouldn't this check if list is a JArray?
+            if(list != Empty()){
                 foreach(JToken entry in (JArray)list){
                     result.Add(entry);
                 }
@@ -139,7 +139,7 @@ namespace DataFixerUpper.Serialization{
                 return DataResult.Error($"{nameof(MergeToList)} called with not a list: {list}", list);
             }
             JArray result = new JArray();
-            if(list != Empty()){ //FIXME: The logic here feels flawed, shouldn't this check if list is a JArray?
+            if(list != Empty()){
                 foreach(JToken entry in (JArray)list){
                     result.Add(entry);
                 }

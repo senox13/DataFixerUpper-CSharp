@@ -9,22 +9,9 @@ namespace DataFixerUpper.DataFixers.Util{
         /*
          * Constructor
          */
-        private Either(){}
+        protected Either(){}
 
-
-        //TODO: Move static methods to separate static class
-        /*
-         * Static methods
-         */
-        public static Either<L, R> Left(L value){
-            return new LeftImpl(value);
-        }
-
-        public static Either<L, R> Right(R value){
-            return new RightImpl(value);
-        }
-
-
+        
         /*
          * Abstract methods
          */
@@ -57,22 +44,22 @@ namespace DataFixerUpper.DataFixers.Util{
         }
 
         public Either<R, L> Swap(){
-            return (Either<R, L>)Map<object>(Either<R, L>.Right, Either<R, L>.Left);
+            return (Either<R, L>)Map<object>(Either.Right<R, L>, Either.Left<R, L>);
         }
 
         public Either<L1, R> MapLeft<L1>(Func<L, L1> function){
-            return (Either<L1, R>)Map<object>(l => Either<L1, R>.Left(function(l)), Right);
+            return (Either<L1, R>)Map<object>(l => Either.Left<L1, R>(function(l)), Either.Right<L1, R>);
         }
 
         public Either<L, R1> MapRight<R1>(Func<R, R1> function){
-            return (Either<L, R1>)Map<object>(Left, r => Either<L, R1>.Right(function(r)));
+            return (Either<L, R1>)Map<object>(Either.Left<L, R1>, r => Either.Right<L, R1>(function(r)));
         }
 
 
         /*
          * Nested types
          */
-        private sealed class LeftImpl : Either<L, R>{
+        internal sealed class LeftImpl : Either<L, R>{
             /*
              * Fields
              */
@@ -138,7 +125,7 @@ namespace DataFixerUpper.DataFixers.Util{
             }
         }
 
-        private sealed class RightImpl : Either<L, R>{
+        internal sealed class RightImpl : Either<L, R>{
             /*
              * Fields
              */
@@ -202,6 +189,19 @@ namespace DataFixerUpper.DataFixers.Util{
             public override int GetHashCode(){
                 return ObjectUtils.Hash(value);
             }
+        }
+    }
+
+    public static class Either{
+        /*
+         * Static methods
+         */
+        public static Either<L, R> Left<L, R>(L value){
+            return new Either<L, R>.LeftImpl(value);
+        }
+
+        public static Either<L, R> Right<L, R>(R value){
+            return new Either<L, R>.RightImpl(value);
         }
     }
 }

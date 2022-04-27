@@ -159,7 +159,7 @@ namespace DataFixerUpper.Serialization.Codecs{
              * Applicative override methods
              */
             public override App<Mu<O>, A> Point<A>(A a){
-                return RecordCodecBuilder.Point<O, A>(a);
+                return Point<O, A>(a);
             }
 
             public override Func<App<Mu<O>, A>, App<Mu<O>, R>> Lift1<A, R>(App<Mu<O>, Func<A, R>> function){
@@ -204,9 +204,24 @@ namespace DataFixerUpper.Serialization.Codecs{
                 );
             }
 
-            /*public override App<Mu<O>, R> Ap4<T1, T2, T3, T4, R>(App<Mu<O>, Func<T1, T2, T3, T4, R>> func, App<Mu<O>, T1> t1, App<Mu<O>, T2> t2, App<Mu<O>, T3> t3, App<Mu<O>, T4> t4){
-                //TODO: Ap4
-            }*/
+            public override App<Mu<O>, R> Ap4<T1, T2, T3, T4, R>(App<Mu<O>, Func<T1, T2, T3, T4, R>> func, App<Mu<O>, T1> t1, App<Mu<O>, T2> t2, App<Mu<O>, T3> t3, App<Mu<O>, T4> t4){
+                RecordCodecBuilder<O, Func<T1, T2, T3, T4, R>> function = Unbox(func);
+                RecordCodecBuilder<O, T1> f1 = Unbox(t1);
+                RecordCodecBuilder<O, T2> f2 = Unbox(t2);
+                RecordCodecBuilder<O, T3> f3 = Unbox(t3);
+                RecordCodecBuilder<O, T4> f4 = Unbox(t4);
+
+                return new RecordCodecBuilder<O, R>(
+                    o => function.getter.Invoke(o).Invoke(
+                        f1.getter.Invoke(o),
+                        f2.getter.Invoke(o),
+                        f3.getter.Invoke(o),
+                        f4.getter.Invoke(o)
+                    ),
+                    o => new MapEncoderAp4<T1, T2, T3, T4, R>(function, f1, f2, f3, f4, o),
+                    new MapDecoderAp4<T1, T2, T3, T4, R>(function, f1, f2, f3, f4)
+                );
+            }
 
             public override App<Mu<O>, R> Map<T, R>(Func<T, R> func, App<Mu<O>, T> ts){
                 RecordCodecBuilder<O, T> unbox = Unbox(ts);
@@ -495,9 +510,116 @@ namespace DataFixerUpper.Serialization.Codecs{
                 }
             }
 
-            //TODO: MapEncoderAp4
+            private sealed class MapEncoderAp4<T1, T2, T3, T4, R> : MapEncoder.Implementation<R>{
+                /*
+                 * Fields
+                 */
+                private readonly IMapEncoder<Func<T1, T2, T3, T4, R>> fEncoder;
+                private readonly IMapEncoder<T1> e1;
+                private readonly IMapEncoder<T2> e2;
+                private readonly IMapEncoder<T3> e3;
+                private readonly IMapEncoder<T4> e4;
+                private readonly T1 v1;
+                private readonly T2 v2;
+                private readonly T3 v3;
+                private readonly T4 v4;
 
-            //TODO: MapDecoderAp4
+
+                /*
+                 * Constructor
+                 */
+                public MapEncoderAp4(RecordCodecBuilder<O, Func<T1, T2, T3, T4, R>> function, RecordCodecBuilder<O, T1> f1, RecordCodecBuilder<O, T2> f2, RecordCodecBuilder<O, T3> f3, RecordCodecBuilder<O, T4> f4, O o){
+                    fEncoder = function.encoder.Invoke(o);
+                    e1 = f1.encoder.Invoke(o);
+                    e2 = f2.encoder.Invoke(o);
+                    e3 = f3.encoder.Invoke(o);
+                    e4 = f4.encoder.Invoke(o);
+                    v1 = f1.getter.Invoke(o);
+                    v2 = f2.getter.Invoke(o);
+                    v3 = f3.getter.Invoke(o);
+                    v4 = f4.getter.Invoke(o);
+                }
+
+
+                /*
+                 * MapEncoder.Implementation override methods
+                 */
+                public override RecordBuilder<T> Encode<T>(R input, DynamicOps<T> ops, RecordBuilder<T> prefix){
+                    e1.Encode(v1, ops, prefix);
+                    e2.Encode(v2, ops, prefix);
+                    e3.Encode(v3, ops, prefix);
+                    e4.Encode(v4, ops, prefix);
+                    fEncoder.Encode((t1, t2, t3, t4) => input, ops, prefix);
+                    return prefix;
+                }
+                
+                public override IEnumerable<T> Keys<T>(DynamicOps<T> ops){
+                    return Enumerable.Concat(fEncoder.Keys(ops),
+                        Enumerable.Concat(e1.Keys(ops),
+                        Enumerable.Concat(e2.Keys(ops),
+                        Enumerable.Concat(e3.Keys(ops), e4.Keys(ops)))));
+                }
+
+
+                /*
+                 * Object override methods
+                 */
+                public override string ToString(){
+                    return $"{fEncoder} * {e1} * {e2} * {e3} * {e4}";
+                }
+            }
+
+            private sealed class MapDecoderAp4<T1, T2, T3, T4, R> : MapDecoder.Implementation<R>{
+                /*
+                 * Fields
+                 */
+                private readonly RecordCodecBuilder<O, Func<T1, T2, T3, T4, R>> function;
+                private readonly RecordCodecBuilder<O, T1> f1;
+                private readonly RecordCodecBuilder<O, T2> f2;
+                private readonly RecordCodecBuilder<O, T3> f3;
+                private readonly RecordCodecBuilder<O, T4> f4;
+
+
+                /*
+                 * Constructor
+                 */
+                public MapDecoderAp4(RecordCodecBuilder<O, Func<T1, T2, T3, T4, R>> functionIn, RecordCodecBuilder<O, T1> f1In, RecordCodecBuilder<O, T2> f2In, RecordCodecBuilder<O, T3> f3In, RecordCodecBuilder<O, T4> f4In){
+                    function = functionIn;
+                    f1 = f1In;
+                    f2 = f2In;
+                    f3 = f3In;
+                    f4 = f4In;
+                }
+
+
+                /*
+                 * MapDecoder.Implementation override methods
+                 */
+                public override DataResult<R> Decode<T>(DynamicOps<T> ops, IMapLike<T> input){
+                    return DataResult.Unbox(DataResult.GetInstance().Ap4(
+                        function.decoder.Decode(ops, input),
+                        f1.decoder.Decode(ops, input),
+                        f2.decoder.Decode(ops, input),
+                        f3.decoder.Decode(ops, input),
+                        f4.decoder.Decode(ops, input)
+                    ));
+                }
+
+                public override IEnumerable<T> Keys<T>(DynamicOps<T> ops){
+                    return Enumerable.Concat(function.decoder.Keys(ops),
+                        Enumerable.Concat(f1.decoder.Keys(ops),
+                        Enumerable.Concat(f2.decoder.Keys(ops),
+                        Enumerable.Concat(f3.decoder.Keys(ops), f4.decoder.Keys(ops)))));
+                }
+
+
+                /*
+                 * Object override methods
+                 */
+                public override string ToString(){
+                    return $"{function.decoder} * {f1.decoder} * {f2.decoder} * {f3.decoder} * {f4.decoder}";
+                }
+            }
 
             private sealed class MapEncoderMapped<T, R> : MapEncoder.Implementation<R>{
                 /*

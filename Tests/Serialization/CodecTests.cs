@@ -94,7 +94,7 @@ namespace DataFixerUpperTests.Serialization{
         [Test]
 	    public void EitherEncodeRight(){
 		    ICodec<Either<int, string>> codec = Codec.Either(Codec.INT, Codec.STRING);
-		    Either<int, string> input = Either<int, string>.Right("Test");
+		    Either<int, string> input = Either.Right<int, string>("Test");
 		    DataResult<JToken> dataResult = codec.EncodeStart(JsonOps.INSTANCE, input);
             Assert.Multiple(() => {
 		        Assert.IsTrue(dataResult.Result().IsPresent());
@@ -105,7 +105,7 @@ namespace DataFixerUpperTests.Serialization{
 	    [Test]
 	    public void EitherEncodeLeft(){
 		    ICodec<Either<int, string>> codec = Codec.Either(Codec.INT, Codec.STRING);
-		    Either<int, string> input = Either<int, string>.Left(20);
+		    Either<int, string> input = Either.Left<int, string>(20);
 		    DataResult<JToken> dataResult = codec.EncodeStart(JsonOps.INSTANCE, input);
             Assert.Multiple(() => {
 		        Assert.IsTrue(dataResult.Result().IsPresent());
