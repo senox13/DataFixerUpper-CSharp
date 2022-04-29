@@ -8,6 +8,7 @@ using DataFixerUpper.Util;
 namespace DataFixerUpper.Serialization{
     public interface ICodec<A> : IEncoder<A>, IDecoder<A>{}
 
+    //TODO: Merge with Codec
     public static class CodecExtensions{
         /*
          * Codec extension methods

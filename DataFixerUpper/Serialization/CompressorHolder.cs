@@ -5,7 +5,6 @@ namespace DataFixerUpper.Serialization{
         /*
          * Fields
          */
-        //HACK: This is hideous, but it saves me from requiring a non-generic version of DynamicOps
         private readonly Dictionary<object, object> compressors = new Dictionary<object, object>();
 
 

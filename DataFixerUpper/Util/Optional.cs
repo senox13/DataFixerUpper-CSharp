@@ -42,6 +42,7 @@ namespace DataFixerUpper.Util{
         /*
          * Static methods
          */
+        //TODO: Move these to a separate, non-generic static class for consistency
         /// <summary>
         /// Returns an empty <see cref="Optional{T}"/> instance.
         /// </summary>

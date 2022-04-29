@@ -7,6 +7,7 @@ namespace DataFixerUpper.Util{
     /// instances and collections.
     /// </summary>
     public static class CollectionUtils{
+        //TODO: This class needs tests
         /// <summary>
         /// Calls the given <see cref="Action{T}"/> with the given <typeparamref name="T"/>
         /// instance, then returns the given <typeparamref name="T"/> instance.
