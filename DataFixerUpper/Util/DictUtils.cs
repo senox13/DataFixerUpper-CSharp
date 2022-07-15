@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
-namespace MCEngine.Util{
+namespace DataFixerUpper.Util{
     /// <summary>
     /// Provides utilities for creating and populating dictionaries from collections.
     /// </summary>

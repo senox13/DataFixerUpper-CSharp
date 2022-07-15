@@ -1,10 +1,9 @@
-﻿using NUnit.Framework;
-using MCEngine.Util;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using NUnit.Framework;
+using DataFixerUpper.Util;
 
-
-namespace Tests.Util{
+namespace DataFixerUpperTests.Util{
     [TestFixture]
     public class DictUtilsTests{
         [Test]

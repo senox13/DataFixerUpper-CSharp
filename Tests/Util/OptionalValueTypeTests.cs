@@ -3,7 +3,7 @@ using NUnit.Framework;
 using DataFixerUpper.Util;
 
 
-namespace Tests.Util{
+namespace DataFixerUpperTests.Util{
     [TestFixture]
     public class OptionalValueTypeTests{
         private const int TEST_NUM = 10;

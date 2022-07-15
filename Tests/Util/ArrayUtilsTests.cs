@@ -3,7 +3,7 @@ using NUnit.Framework;
 using DataFixerUpper.Util;
 
 
-namespace Tests.Util{
+namespace DataFixerUpperTests.Util{
     [TestFixture]
     public class ArrayUtilsTests{
         private int[] array;
