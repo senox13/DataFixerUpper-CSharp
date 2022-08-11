@@ -1,5 +1,5 @@
-﻿using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
+﻿using JavaUtilities;
+using DataFixerUpper.DataFixers.Util;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public sealed class PairCodec<F, S> : ICodec<Pair<F, S>>{

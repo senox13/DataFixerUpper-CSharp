@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public sealed class EitherMapCodec<F, S> : MapCodec<Either<F, S>>{

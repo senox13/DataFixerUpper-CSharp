@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JavaUtilities;
 using DataFixerUpper.Serialization.Codecs;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
 
 namespace DataFixerUpper.Serialization{
     public static class Codec{

@@ -1,5 +1,5 @@
 ﻿using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public sealed class EitherCodec<F, S> : ICodec<Either<F, S>>{

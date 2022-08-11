@@ -1,0 +1,3 @@
+[submodule "JavaUtilities"]
+	path = JavaUtilities
+	url = https://github.com/senox13/JavaUtilities

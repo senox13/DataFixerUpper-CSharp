@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization{
     public abstract class DynamicOps<T>{
@@ -204,7 +204,7 @@ namespace DataFixerUpper.Serialization{
         }
 
         public virtual DataResult<T> GetGeneric(T input, T key){
-            return GetMap(input).FlatMap(map => Optional<T>.OfNullable(map.Get(key))
+            return GetMap(input).FlatMap(map => Optional.OfNullable(map.Get(key))
                 .Map(t => DataResult.Success(t))
                 .OrElseGet(() => DataResult.Error<T>($"No element {key} in the map {input}"))
             );

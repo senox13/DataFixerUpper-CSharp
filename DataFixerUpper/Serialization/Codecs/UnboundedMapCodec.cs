@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using JavaUtilities;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public sealed class UnboundedMapCodec<K, V> : IBaseMapCodec<K, V>, ICodec<IDictionary<K, V>>{

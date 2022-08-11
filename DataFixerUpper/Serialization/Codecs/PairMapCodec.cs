@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JavaUtilities;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public sealed class PairMapCodec<F, S> : MapCodec<Pair<F, S>>{

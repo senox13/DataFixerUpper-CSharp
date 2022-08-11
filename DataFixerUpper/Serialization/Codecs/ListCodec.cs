@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using JavaUtilities;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public sealed class ListCodec<A> : ICodec<IList<A>>{

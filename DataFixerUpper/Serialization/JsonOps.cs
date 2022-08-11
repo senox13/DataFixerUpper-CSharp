@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization{
     public class JsonOps : DynamicOps<JToken>{

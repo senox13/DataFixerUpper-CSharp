@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JavaUtilities;
 using DataFixerUpper.DataFixers.Kinds;
-using DataFixerUpper.Util;
 
 namespace DataFixerUpper.DataFixers.Util{
     public sealed class Pair<F, S> : App<Pair.Mu<S>, F>{

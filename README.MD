@@ -5,7 +5,7 @@ only the types in the `com.mojang.serialization` package and their
 dependencies have been implemented. These types allow for format-agnostic
 serialization, including a single `DynamicOps` implementation for
 converting to/from JSON (`JsonOps`), via the library [Json.NET](https://www.newtonsoft.com/json).
-Tests are included that broadly cover the current features of this library,
+Tests are included that partially cover the current features of this library,
 but are far from comprehensive. ***Bugs are to be expected.***
 
 ## Contact

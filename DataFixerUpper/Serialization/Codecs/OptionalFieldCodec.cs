@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public class OptionalFieldCodec<A> : MapCodec<Optional<A>>{
@@ -25,13 +25,13 @@ namespace DataFixerUpper.Serialization.Codecs{
         public override DataResult<Optional<A>> Decode<T>(DynamicOps<T> ops, IMapLike<T> input){
             T value = input.Get(name);
             if(value == null){
-                return DataResult.Success(Optional<A>.Empty());
+                return DataResult.Success(Optional.Empty<A>());
             }
             DataResult<A> parsed = elementCodec.Parse(ops, value);
             if(parsed.Result().IsPresent()){
-                return parsed.Map(Optional<A>.Of);
+                return parsed.Map(Optional.Of);
             }
-            return DataResult.Success(Optional<A>.Empty());
+            return DataResult.Success(Optional.Empty<A>());
         }
 
         public override RecordBuilder<T> Encode<T>(Optional<A> input, DynamicOps<T> ops, RecordBuilder<T> prefix){

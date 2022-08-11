@@ -1,6 +1,6 @@
 ﻿using System;
+using JavaUtilities;
 using DataFixerUpper.DataFixers.Kinds;
-using DataFixerUpper.Util;
 
 namespace DataFixerUpper.DataFixers.Util{
     public abstract class Either<L, R> : App<Either<L, R>.Mu, L>{
@@ -95,11 +95,11 @@ namespace DataFixerUpper.DataFixers.Util{
             }
             
             public override Optional<L> Left(){
-                return Optional<L>.Of(value);
+                return Optional.Of(value);
             }
             
             public override Optional<R> Right(){
-                return Optional<R>.Empty();
+                return Optional.Empty<R>();
             }
 
 
@@ -161,11 +161,11 @@ namespace DataFixerUpper.DataFixers.Util{
             }
             
             public override Optional<L> Left(){
-                return Optional<L>.Empty();
+                return Optional.Empty<L>();
             }
             
             public override Optional<R> Right(){
-                return Optional<R>.Of(value);
+                return Optional.Of(value);
             }
 
 

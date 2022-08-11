@@ -7,7 +7,7 @@ using DataFixerUpper.DataFixers.Kinds;
 using DataFixerUpper.DataFixers.Util;
 using DataFixerUpper.Serialization;
 using DataFixerUpper.Serialization.Codecs;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpperTests.Serialization{
     [TestFixture]

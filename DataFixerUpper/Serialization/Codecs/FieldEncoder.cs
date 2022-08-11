@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization.Codecs{
     public class FieldEncoder<A> : MapEncoder.Implementation<A>{

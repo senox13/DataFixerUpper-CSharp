@@ -1,7 +1,7 @@
 ﻿using System;
 using DataFixerUpper.DataFixers.Kinds;
 using DataFixerUpper.DataFixers.Util;
-using DataFixerUpper.Util;
+using JavaUtilities;
 
 namespace DataFixerUpper.Serialization{
     public static class DataResult{
@@ -35,16 +35,16 @@ namespace DataFixerUpper.Serialization{
         }
 
         public static DataResult<R> Error<R>(string message, Lifecycle lifecycle){
-            return new DataResult<R>(Either.Right<R, DataResult<R>.PartialResult>(new DataResult<R>.PartialResult(message, Optional<R>.Empty())), lifecycle);
+            return new DataResult<R>(Either.Right<R, DataResult<R>.PartialResult>(new DataResult<R>.PartialResult(message, Optional.Empty<R>())), lifecycle);
         }
 
         public static DataResult<R> Error<R>(string message, R partialResult, Lifecycle lifecycle){
-            return new DataResult<R>(Either.Right<R, DataResult<R>.PartialResult>(new DataResult<R>.PartialResult(message, Optional<R>.Of(partialResult))), lifecycle);
+            return new DataResult<R>(Either.Right<R, DataResult<R>.PartialResult>(new DataResult<R>.PartialResult(message, Optional.Of(partialResult))), lifecycle);
 
         }
 
         public static Func<K, DataResult<V>> PartialGet<K, V>(Func<K, V> partialGet, Func<string> errorPrefix){
-            return name => Optional<V>.OfNullable(partialGet.Invoke(name)).Map(Success).OrElseGet(() => Error<V>(errorPrefix.Invoke() + name));
+            return name => Optional.OfNullable(partialGet.Invoke(name)).Map(Success).OrElseGet(() => Error<V>(errorPrefix.Invoke() + name));
         }
 
 
@@ -180,7 +180,7 @@ namespace DataFixerUpper.Serialization{
 
         public Optional<R> ResultOrPartial(Action<string> onError){
             return result.Map(
-                Optional<R>.Of,
+                Optional.Of,
                 r => {
                     onError.Invoke(r.message);
                     return r.partialResult;
@@ -233,11 +233,11 @@ namespace DataFixerUpper.Serialization{
                 r => r.partialResult.Map(value => {
                     DataResult<R2> second = function(value);
                     return DataResult<R2>.Create(Either.Right<R2, DataResult<R2>.PartialResult>(second.Get().Map(
-                        l2 => new DataResult<R2>.PartialResult(r.message, Optional<R2>.Of(l2)),
+                        l2 => new DataResult<R2>.PartialResult(r.message, Optional.Of(l2)),
                         r2 => new DataResult<R2>.PartialResult(AppendMessages(r.message, r2.message), r2.partialResult)
                     )), lifecycle.Add(second.Lifecycle()));
                 }).OrElseGet(
-                    () => DataResult<R2>.Create(Either.Right<R2, DataResult<R2>.PartialResult>(new DataResult<R2>.PartialResult(r.message, Optional<R2>.Empty())), lifecycle)
+                    () => DataResult<R2>.Create(Either.Right<R2, DataResult<R2>.PartialResult>(new DataResult<R2>.PartialResult(r.message, Optional.Empty<R2>())), lifecycle)
                 )
             );
         }
@@ -273,11 +273,11 @@ namespace DataFixerUpper.Serialization{
         }
 
         public DataResult<R> SetPartial(Func<R> partial){
-            return Create(result.MapRight(r => new PartialResult(r.message, Optional<R>.Of(partial.Invoke()))), lifecycle);
+            return Create(result.MapRight(r => new PartialResult(r.message, Optional.Of(partial.Invoke()))), lifecycle);
         }
 
         public DataResult<R> SetPartial(R partial){
-            return Create(result.MapRight(r => new PartialResult(r.message, Optional<R>.Of(partial))), lifecycle);
+            return Create(result.MapRight(r => new PartialResult(r.message, Optional.Of(partial))), lifecycle);
         }
 
         public DataResult<R> MapError(Func<string, string> function){
@@ -339,7 +339,7 @@ namespace DataFixerUpper.Serialization{
                     DataResult<R2>.PartialResult result = function(partialResult.Get());
                     return new DataResult<R2>.PartialResult(AppendMessages(message, result.message), result.partialResult);
                 }
-                return new DataResult<R2>.PartialResult(message, Optional<R2>.Empty());
+                return new DataResult<R2>.PartialResult(message, Optional.Empty<R2>());
             }
 
             public string Message(){
