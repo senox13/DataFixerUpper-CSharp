@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DataFixerUpper.DataFixers.Util;
 using JavaUtilities;
+using DataFixerUpper.DataFixers.Util;
 
 namespace DataFixerUpper.Serialization{
     public abstract class DynamicOps<T>{
@@ -141,7 +141,7 @@ namespace DataFixerUpper.Serialization{
             });
         }
 
-        public virtual DataResult<MemoryStream> GetByteBuffer(T input){
+        public virtual DataResult<MemoryStream> GetMemoryStream(T input){
             return GetEnumerable(input).FlatMap(e => {
                 List<T> elements = e.ToList();
                 if(!elements.All(elem => GetNumberValue(elem).Result().IsPresent())){
@@ -163,7 +163,7 @@ namespace DataFixerUpper.Serialization{
             return CreateList(bytes);
         }
 
-        public virtual DataResult<IEnumerable<int>> GetIntStream(T input){
+        public virtual DataResult<IEnumerable<int>> GetIntEnumerable(T input){
             return GetEnumerable(input).FlatMap(e => {
                 List<T> elements = e.ToList();
                 if(!elements.All(elem => GetNumberValue(elem).Result().IsPresent())){
@@ -179,7 +179,7 @@ namespace DataFixerUpper.Serialization{
             return CreateList(input.Select(i => CreateInt(i)));
         }
 
-        public virtual DataResult<IEnumerable<long>> GetLongStream(T input){
+        public virtual DataResult<IEnumerable<long>> GetLongEnumerable(T input){
             return GetEnumerable(input).FlatMap(e => {
                 List<T> elements = e.ToList();
                 if(!elements.All(elem => GetNumberValue(elem).Result().IsPresent())){

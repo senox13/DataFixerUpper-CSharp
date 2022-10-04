@@ -20,9 +20,9 @@ namespace DataFixerUpper.Serialization{
         public static readonly PrimitiveCodec<double> DOUBLE = new DoubleCodec();
         public static readonly PrimitiveCodec<string> STRING = new StringCodec();
         public static readonly PrimitiveCodec<MemoryStream> MEMORY_STREAM = new MemoryStreamCodec();
-        public static readonly PrimitiveCodec<IEnumerable<int>> INT_ENUMERABLE = new IntStreamCodec();
+        public static readonly PrimitiveCodec<IEnumerable<int>> INT_ENUMERABLE = new IntStreamCodec(); //FIXME: Rename these two types?
         public static readonly PrimitiveCodec<IEnumerable<long>> LONG_ENUMERABLE = new LongStreamCodec();
-        //PENDINGIMPL: PASSTHROUGH omitted until Dynamic is added
+        public static readonly ICodec<IDynamic> PASSTHROUGH = new PassthroughCodec();
         public static readonly MapCodec<Unit> EMPTY = MapCodec.Of(Encoder.Empty<Unit>(), Decoder.Unit(DataFixers.Util.Unit.INSTANCE));
 
 
@@ -280,7 +280,7 @@ namespace DataFixerUpper.Serialization{
              * PrimitiveCodec overrides
              */
             public override DataResult<MemoryStream> Read<T>(DynamicOps<T> ops, T input){
-                return ops.GetByteBuffer(input);
+                return ops.GetMemoryStream(input);
             }
 
             public override T Write<T>(DynamicOps<T> ops, MemoryStream value){
@@ -299,7 +299,7 @@ namespace DataFixerUpper.Serialization{
              * PrimitiveCodec overrides
              */
             public override DataResult<IEnumerable<int>> Read<T>(DynamicOps<T> ops, T input){
-                return ops.GetIntStream(input);
+                return ops.GetIntEnumerable(input);
             }
 
             public override T Write<T>(DynamicOps<T> ops, IEnumerable<int> value){
@@ -318,11 +318,54 @@ namespace DataFixerUpper.Serialization{
              * PrimitiveCodec overrides
              */
             public override DataResult<IEnumerable<long>> Read<T>(DynamicOps<T> ops, T input){
-                return ops.GetLongStream(input);
+                return ops.GetLongEnumerable(input);
             }
 
             public override T Write<T>(DynamicOps<T> ops, IEnumerable<long> value){
                 return ops.CreateLongList(value);
+            }
+        }
+
+        private sealed class PassthroughCodec : ICodec<IDynamic>{
+            /*
+             * Constructor
+             */
+            public PassthroughCodec(){}
+
+
+            /*
+             * ICodec implementation
+             */
+            public DataResult<Pair<IDynamic, T>> Decode<T>(DynamicOps<T> ops, T input){
+                return DataResult.Success(DataFixers.Util.Pair.Of<IDynamic, T>(new Dynamic<T>(ops, input), ops.Empty()));
+            }
+
+            public DataResult<T> Encode<T>(IDynamic input, DynamicOps<T> ops, T prefix){
+                Dynamic<T> castDynamic = input.Convert(ops);
+                T casted = castDynamic.GetValue();
+                if(casted.Equals(castDynamic.GetOps().Empty())){
+                    // nothing to merge, return rest
+                    return DataResult.Success(prefix, Lifecycle.Experimental());
+                }
+                if(prefix.Equals(ops.Empty())){
+                    // no need to merge anything, return the old value
+                    return DataResult.Success(casted, Lifecycle.Experimental());
+                }
+                DataResult<T> toMap = ops.GetMap(casted).FlatMap(map => ops.MergeToMap(prefix, map));
+                return toMap.Result().Map(DataResult.Success).OrElseGet(() => {
+                    DataResult<T> toList = ops.GetEnumerable(casted).FlatMap(stream => ops.MergeToList(prefix, stream.ToList()));
+                    return toList.Result().Map(DataResult.Success).OrElseGet(() =>
+                        DataResult.Error($"Don't know how to merge {prefix} and {casted}", prefix, Lifecycle.Experimental())
+                    );
+                });
+            }
+
+
+            /*
+             * Object override methods
+             */
+            public override string ToString(){
+                return $"passthrough";
             }
         }
 

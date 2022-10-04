@@ -95,6 +95,22 @@ namespace DataFixerUpper.Serialization{
             return new JValue(value);
         }
 
+        public override JToken CreateByte(sbyte value){
+            return new JValue(value);
+        }
+
+        public override JToken CreateShort(short value){
+            return new JValue(value);
+        }
+
+        public override JToken CreateInt(int value){
+            return new JValue(value);
+        }
+
+        public override JToken CreateLong(long value){
+            return new JValue(value);
+        }
+
         public override DataResult<bool> GetBooleanValue(JToken input){
             if(input.Type == JTokenType.Boolean){
                 return DataResult.Success((bool)input);
