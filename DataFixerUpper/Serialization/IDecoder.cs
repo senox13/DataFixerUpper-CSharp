@@ -43,7 +43,13 @@ namespace DataFixerUpper.Serialization{
             return decoder.Decode(ops, input).Map(p => p.GetFirst());
         }
 
-        //PENDINGIMPL: Second Parse and Decode methods omitted until Dynamic can be implemented
+        public static DataResult<Pair<A, T>> Decode<A, T>(this IDecoder<A> decoder, Dynamic<T> input){
+            return decoder.Decode(input.GetOps(), input.GetValue());
+        }
+
+        public static DataResult<A> Parse<A, T>(this IDecoder<A> decoder, Dynamic<T> input){
+            return decoder.Decode(input).Map(p => p.GetFirst());
+        }
 
         //Terminal
 
